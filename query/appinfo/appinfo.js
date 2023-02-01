@@ -9,6 +9,7 @@ router.post(
   "/appinfo",
   (req, res) => {
     let body = req.body;
+    
     const submit = async () => {
       if (body.action === "UPDATE") {
         pool.query(
