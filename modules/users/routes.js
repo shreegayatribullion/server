@@ -9,5 +9,7 @@ router.get("/", controller.fetchUsers);
 router.post("/", controller.createUser);
 /* DELETE USER */
 router.delete("/", controller.deleteUser);
+/* AUTH */
+router.post("/auth", controller.authUser);
 
 module.exports = router;

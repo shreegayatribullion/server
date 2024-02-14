@@ -16,6 +16,10 @@ const User = rogerSequelize.define("shree_gayatri_bullion_users", {
     type: DataTypes.STRING,
     // allowNull defaults to true
   },
+  blocked: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
 });
 
 User.sync({ alter: true });
