@@ -22,7 +22,7 @@ const User = rogerSequelize.define("shree_gayatri_bullion_users", {
   },
 });
 
-User.sync({ alter: true });
+User.sync();
 
 // Export the User model
 module.exports = { User };
