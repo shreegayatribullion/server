@@ -1,5 +1,9 @@
 const { rogerSequelize } = require("../../database/sequelize");
 const { User } = require("./model/user.model"); // Replace with the actual file name
+const jwt = require("jsonwebtoken");
+const { secret } = require("../../constant/secret.constant");
+
+const userInit = new User();
 
 async function fetchUsers(req, res) {
   try {
@@ -71,12 +75,19 @@ async function authUser(req, res) {
         blocked: false,
       },
     });
-    console.log(user);
+
+    const loginStamp = await userInit.updateLoginStamp(mobile_no);
+    // console.log(user);
 
     if (user) {
+      const start = Date.now();
+      var token = jwt.sign({ start }, secret, {
+        expiresIn: 98640000,
+        // expiresIn: 3600,
+      });
       res.status(200).json({
         message: "user fetched",
-        data: user,
+        data: { ...user, token: token, loginStamp: loginStamp },
       });
     } else {
       res.status(400).json({
@@ -89,4 +100,34 @@ async function authUser(req, res) {
   }
 }
 
-module.exports = { fetchUsers, createUser, deleteUser, authUser };
+async function validate(req, res) {
+  try {
+    let token = req.headers.auth_token;
+    let uid = req.headers.uid;
+    const user = await User.findOne({
+      where: {
+        login_stamp: uid,
+        blocked: false,
+      },
+    });
+
+    jwt.verify(token, secret, function (err, decoded) {
+      if (!err && user) {
+        req.user_detail = decoded;
+        res.status(200).json({
+          message: "user fetched",
+          data: "User is valid",
+        });
+      } else {
+        res.status(401).json({
+          message: "not allowed",
+          code: 401,
+        });
+      }
+    });
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
+module.exports = { fetchUsers, createUser, deleteUser, authUser, validate };

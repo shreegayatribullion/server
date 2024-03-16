@@ -12,4 +12,6 @@ router.delete("/", controller.deleteUser);
 /* AUTH */
 router.post("/auth", controller.authUser);
 
+router.get("/validate", controller.validate);
+
 module.exports = router;
